@@ -1,0 +1,127 @@
+import json
+import os
+
+DATA_FILE = "data/prescriptions.json"
+
+def load_data():
+    if not os.path.exists("data"):
+        os.makedirs("data")
+
+    if not os.path.exists(DATA_FILE):
+        with open(DATA_FILE, "w") as f:
+            json.dump({"prescriptions": []}, f)
+
+    with open(DATA_FILE, "r") as f:
+        return json.load(f)
+
+
+def save_data(data):
+    with open(DATA_FILE, "w") as f:
+        json.dump(data, f, indent=4)
+
+def add_prescription(name, dosage, times):
+    data = load_data()
+
+    prescription = {
+        "name": name,
+        "dosage": dosage,
+        "times": times
+    }
+
+    data["prescriptions"].append(prescription)
+    save_data(data)
+    print(f"\n✔ Prescription added for: {name}\n")
+
+
+def view_prescriptions():
+    data = load_data()
+    prescriptions = data["prescriptions"]
+
+    if not prescriptions:
+        print("\nNo prescriptions found.\n")
+        return
+
+    print("\n----- Saved Prescriptions -----")
+    for idx, p in enumerate(prescriptions, start=1):
+        print(f"{idx}. {p['name']} - {p['dosage']} at {', '.join(p['times'])}")
+    print("--------------------------------\n")
+
+
+def delete_prescription(index):
+    data = load_data()
+    try:
+        removed = data["prescriptions"].pop(index - 1)
+        save_data(data)
+        print(f"\n✔ Removed: {removed['name']}\n")
+    except IndexError:
+        print("\n❌ Invalid index!\n")
+
+import datetime
+
+def check_reminders():
+    now = datetime.datetime.now().strftime("%H:%M")
+
+    data = load_data()
+    reminders = []
+
+    for p in data["prescriptions"]:
+        if now in p["times"]:
+            reminders.append(f"⏰ It's time to take: {p['name']} ({p['dosage']})")
+
+    return reminders
+import time
+
+def start_scheduler():
+    print("\n🔔 Reminder system started. Running in background...\n")
+
+    try:
+        while True:
+            alerts = check_reminders()
+            for alert in alerts:
+                print(alert)
+
+            time.sleep(60)  # check every minute
+    except KeyboardInterrupt:
+        print("\nScheduler stopped.")
+
+def main():
+    while True:
+        print("\n====== Medicine Reminder & Prescription Tracker ======")
+        print("1. Add Prescription")
+        print("2. View Prescriptions")
+        print("3. Delete Prescription")
+        print("4. Start Reminder Scheduler")
+        print("5. Exit")
+
+        choice = input("\nEnter your choice: ")
+
+        if choice == "1":
+            name = input("Medicine Name: ")
+            dosage = input("Dosage (e.g., 1 tablet): ")
+
+            times_input = input("Enter times in HH:MM format (comma separated): ")
+            times = [t.strip() for t in times_input.split(",")]
+
+            add_prescription(name, dosage, times)
+
+        elif choice == "2":
+            view_prescriptions()
+
+        elif choice == "3":
+            view_prescriptions()
+            index = int(input("Enter prescription number to delete: "))
+            delete_prescription(index)
+
+        elif choice == "4":
+            start_scheduler()
+
+        elif choice == "5":
+            print("Exiting...")
+            break
+
+        else:
+            print("❌ Invalid choice. Try again.")
+
+
+if _name_ == "_main_":
+    main()
