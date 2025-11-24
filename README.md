@@ -41,14 +41,13 @@ project/
 │── README.md
 
 🚀 How to Run the Project
-1. Clone the Repository
-git clone https://github.com/your-username/medicine-reminder.git
+1. Clone the Repository https://github.com/drishti25boe10074-ai/Repository/blob/main/README.md
 
 2. Navigate to Project Folder
 cd medicine-reminder
 
-3. Run the Program
-python main.py
+3. Run the Program 
+python main.py Python Medicine Reminder & Prescription_tracker.py 
 
 📝 Usage Instructions
 1️⃣ Add Prescription
